@@ -8,11 +8,12 @@ import '@mantine/notifications/styles.css'
 import './index.css'
 import App from './App.tsx'
 import { store } from '@/app/store'
+import { theme } from '@/app/theme'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-      <MantineProvider>
+      <MantineProvider theme={theme} defaultColorScheme="dark">
         <Notifications />
         <App />
       </MantineProvider>
