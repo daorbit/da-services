@@ -1,0 +1,15 @@
+{
+  "name": "da-services",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:be": "npm run dev --workspace=admin-be",
+    "dev:fe": "npm run dev --workspace=admin-fe",
+    "build:be": "npm run build --workspace=admin-be",
+    "build:fe": "npm run build --workspace=admin-fe"
+  }
+}
