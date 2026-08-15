@@ -1,5 +1,12 @@
 node_modules/
 dist/
-.env
-.env.local
+build/
+coverage/
 *.log
+.env
+.env.*
+!.env.example
+.DS_Store
+.vite/
+*.tsbuildinfo
+.turbo/
