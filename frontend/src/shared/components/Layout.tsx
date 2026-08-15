@@ -8,12 +8,20 @@ import {
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import {
   ShieldCheck, LogOut, Moon, Sun, Settings as SettingsIcon, ChevronsUpDown,
+  FolderKanban, Users,
 } from "lucide-react";
 import { Wordmark } from "@/shared/components/Brand";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { logout } from "@/features/auth/authSlice";
 
 const NAV_GROUPS = [
+  {
+    heading: "Quantalog",
+    items: [
+      { to: "/quantalog/workspaces", label: "Workspaces", icon: FolderKanban },
+      { to: "/quantalog/users", label: "Users", icon: Users },
+    ],
+  },
   {
     heading: "Manage",
     items: [{ to: "/admin-users", label: "Admin users", icon: ShieldCheck }],
