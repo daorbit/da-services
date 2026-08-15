@@ -7,6 +7,7 @@ import { ArrowLeft, Globe, CreditCard } from "lucide-react";
 import { api } from "@/lib/api";
 
 type Detail = {
+  app: { slug: string; name: string };
   workspace: { id: string; name: string; slug: string; createdAt: string };
   owner: { id: string; email: string; name: string; role: string; createdAt: string } | null;
   subscription: {
@@ -25,24 +26,24 @@ type Detail = {
 
 function StatTile({ label, value }: { label: string; value: string }) {
   return (
-    <Box className="tile" p="md">
+    <Box className="card" p="md">
       <Text size="xs" c="dimmed" tt="uppercase" fw={700} style={{ letterSpacing: "0.06em" }}>
         {label}
       </Text>
-      <Text size="xl" fw={700} mt={4} style={{ fontFamily: "var(--font-display, inherit)" }}>
+      <Text size="xl" fw={700} mt={4}>
         {value}
       </Text>
     </Box>
   );
 }
 
-export function AppWorkspaceDetailPage() {
-  const { appSlug, id } = useParams<{ appSlug: string; id: string }>();
+export function WorkspaceDetailPage() {
+  const { app, id } = useParams<{ app: string; id: string }>();
   const [data, setData] = useState<Detail | null>(null);
 
   useEffect(() => {
-    api.get(`/apps/${appSlug}/workspaces/${id}`).then(({ data }) => setData(data));
-  }, [appSlug, id]);
+    api.get(`/workspaces/${app}/${id}`).then(({ data }) => setData(data));
+  }, [app, id]);
 
   if (!data) {
     return (
@@ -58,11 +59,11 @@ export function AppWorkspaceDetailPage() {
     : true;
 
   return (
-    <Stack gap="lg">
+    <Stack gap="lg" maw={1000} mx="auto">
       <Group gap="xs">
         <Text
           component={Link}
-          to={`/apps/${appSlug}/workspaces`}
+          to="/workspaces"
           size="sm"
           c="dimmed"
           style={{ display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}
@@ -73,7 +74,10 @@ export function AppWorkspaceDetailPage() {
 
       <Group justify="space-between" align="flex-start">
         <div>
-          <Title order={2}>{workspace.name}</Title>
+          <Group gap="xs" align="center">
+            <Title order={2}>{workspace.name}</Title>
+            <Badge variant="outline" color="gray">{data.app.name}</Badge>
+          </Group>
           <Text c="dimmed" size="sm" mt={4}>
             {workspace.slug} · created {new Date(workspace.createdAt).toLocaleDateString()}
           </Text>
@@ -86,7 +90,7 @@ export function AppWorkspaceDetailPage() {
       </Group>
 
       {owner && (
-        <Box className="tile" p="md">
+        <Box className="card" p="md">
           <Text size="xs" c="dimmed" tt="uppercase" fw={700} mb={8} style={{ letterSpacing: "0.06em" }}>
             Owner
           </Text>
@@ -126,7 +130,7 @@ export function AppWorkspaceDetailPage() {
         <Globe size={15} style={{ color: "var(--muted)" }} />
         <Text size="sm" fw={600}>Sites ({sites.length})</Text>
       </Group>
-      <Box className="tile" p={0} style={{ overflow: "hidden" }}>
+      <Box className="card" p={0} style={{ overflow: "hidden" }}>
         <Box style={{ overflowX: "auto" }}>
           <Table verticalSpacing="sm" horizontalSpacing="lg">
             <Table.Thead>

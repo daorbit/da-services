@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  Table, Group, Title, Text, TextInput, Badge, Stack, Box, Pagination,
+  Table, Group, Title, Text, TextInput, Select, Badge, Stack, Box, Pagination,
 } from "@mantine/core";
 import { Search, FolderKanban } from "lucide-react";
 import { api } from "@/lib/api";
+import { useApps } from "@/features/apps/useApps";
 
 type WorkspaceRow = {
   id: string;
+  app: string;
+  appName: string;
   name: string;
   slug: string;
   createdAt: string;
@@ -15,24 +18,21 @@ type WorkspaceRow = {
   plan: { slug: string; expired: boolean } | null;
 };
 
-export function AppWorkspacesPage() {
-  const { appSlug } = useParams<{ appSlug: string }>();
+export function WorkspacesPage() {
+  const { apps } = useApps();
   const navigate = useNavigate();
   const [workspaces, setWorkspaces] = useState<WorkspaceRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
+  const [appFilter, setAppFilter] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    setPage(1);
-  }, [appSlug]);
-
-  useEffect(() => {
     setLoading(true);
     const t = setTimeout(() => {
-      api.get(`/apps/${appSlug}/workspaces`, { params: { q, page } }).then(({ data }) => {
+      api.get("/workspaces", { params: { q, app: appFilter ?? "", page } }).then(({ data }) => {
         setWorkspaces(data.workspaces);
         setPages(data.pages);
         setTotal(data.total);
@@ -40,35 +40,49 @@ export function AppWorkspacesPage() {
       });
     }, 250);
     return () => clearTimeout(t);
-  }, [appSlug, q, page]);
+  }, [q, appFilter, page]);
 
   return (
-    <Stack gap="lg">
+    <Stack gap="xl" maw={1200} mx="auto">
       <Group justify="space-between" align="flex-end">
         <div>
           <Title order={2}>Workspaces</Title>
           <Text c="dimmed" size="sm" mt={4}>
-            {total} workspace{total === 1 ? "" : "s"}. Open one for its users and billing.
+            {total} workspace{total === 1 ? "" : "s"} across every app. Open one for billing detail.
           </Text>
         </div>
-        <TextInput
-          placeholder="Search workspace name"
-          leftSection={<Search size={15} />}
-          value={q}
-          onChange={(e) => {
-            setPage(1);
-            setQ(e.currentTarget.value);
-          }}
-          w={260}
-        />
+        <Group gap="sm">
+          <Select
+            placeholder="All apps"
+            data={apps.map((a) => ({ value: a.slug, label: a.name }))}
+            value={appFilter}
+            onChange={(v) => {
+              setPage(1);
+              setAppFilter(v);
+            }}
+            clearable
+            w={180}
+          />
+          <TextInput
+            placeholder="Search workspace name"
+            leftSection={<Search size={15} />}
+            value={q}
+            onChange={(e) => {
+              setPage(1);
+              setQ(e.currentTarget.value);
+            }}
+            w={240}
+          />
+        </Group>
       </Group>
 
-      <Box className="tile" p={0} style={{ overflow: "hidden" }}>
+      <Box className="card" p={0} style={{ overflow: "hidden" }}>
         <Box style={{ overflowX: "auto" }}>
-          <Table verticalSpacing="sm" horizontalSpacing="lg">
+          <Table verticalSpacing="md" horizontalSpacing="xl">
             <Table.Thead>
               <Table.Tr>
                 <Table.Th>Workspace</Table.Th>
+                <Table.Th>App</Table.Th>
                 <Table.Th>Owner</Table.Th>
                 <Table.Th>Plan</Table.Th>
                 <Table.Th>Created</Table.Th>
@@ -77,9 +91,9 @@ export function AppWorkspacesPage() {
             <Table.Tbody>
               {workspaces.map((w) => (
                 <Table.Tr
-                  key={w.id}
+                  key={`${w.app}-${w.id}`}
                   style={{ cursor: "pointer" }}
-                  onClick={() => navigate(`/apps/${appSlug}/workspaces/${w.id}`)}
+                  onClick={() => navigate(`/workspaces/${w.app}/${w.id}`)}
                 >
                   <Table.Td>
                     <Group gap="sm" wrap="nowrap">
@@ -89,6 +103,9 @@ export function AppWorkspacesPage() {
                         <Text size="xs" c="dimmed">{w.slug}</Text>
                       </div>
                     </Group>
+                  </Table.Td>
+                  <Table.Td>
+                    <Badge variant="outline" color="gray">{w.appName}</Badge>
                   </Table.Td>
                   <Table.Td>
                     <Text size="sm" c="dimmed">{w.owner?.email ?? "—"}</Text>
@@ -103,15 +120,13 @@ export function AppWorkspacesPage() {
                     )}
                   </Table.Td>
                   <Table.Td>
-                    <Text size="sm" c="dimmed">
-                      {new Date(w.createdAt).toLocaleDateString()}
-                    </Text>
+                    <Text size="sm" c="dimmed">{new Date(w.createdAt).toLocaleDateString()}</Text>
                   </Table.Td>
                 </Table.Tr>
               ))}
               {!loading && workspaces.length === 0 && (
                 <Table.Tr>
-                  <Table.Td colSpan={4}>
+                  <Table.Td colSpan={5}>
                     <Text c="dimmed" size="sm" ta="center" py="lg">
                       No workspaces match.
                     </Text>

@@ -4,9 +4,9 @@ import { ProtectedRoute } from "@/shared/components/ProtectedRoute";
 import { Layout } from "@/shared/components/Layout";
 import { AdminUsersPage } from "@/features/admin-users/AdminUsersPage";
 import { AppsPage } from "@/features/apps/AppsPage";
-import { AppUsersPage } from "@/features/app-data/AppUsersPage";
-import { AppWorkspacesPage } from "@/features/app-data/AppWorkspacesPage";
-import { AppWorkspaceDetailPage } from "@/features/app-data/AppWorkspaceDetailPage";
+import { CustomersPage } from "@/features/customers/CustomersPage";
+import { WorkspacesPage } from "@/features/workspaces/WorkspacesPage";
+import { WorkspaceDetailPage } from "@/features/workspaces/WorkspaceDetailPage";
 
 function App() {
   return (
@@ -15,11 +15,11 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
-            <Route index element={<Navigate to="/apps" replace />} />
+            <Route index element={<Navigate to="/customers" replace />} />
+            <Route path="/customers" element={<CustomersPage />} />
+            <Route path="/workspaces" element={<WorkspacesPage />} />
+            <Route path="/workspaces/:app/:id" element={<WorkspaceDetailPage />} />
             <Route path="/apps" element={<AppsPage />} />
-            <Route path="/apps/:appSlug/users" element={<AppUsersPage />} />
-            <Route path="/apps/:appSlug/workspaces" element={<AppWorkspacesPage />} />
-            <Route path="/apps/:appSlug/workspaces/:id" element={<AppWorkspaceDetailPage />} />
             <Route path="/admin-users" element={<AdminUsersPage />} />
           </Route>
         </Route>

@@ -48,7 +48,7 @@ export function AppsPage() {
         </Button>
       </Group>
 
-      <Box className="tile" p={0} style={{ overflow: "hidden" }}>
+      <Box className="card" p={0} style={{ overflow: "hidden" }}>
         <Box style={{ overflowX: "auto" }}>
           <Table verticalSpacing="sm" horizontalSpacing="lg">
             <Table.Thead>

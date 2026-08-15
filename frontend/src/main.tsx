@@ -13,7 +13,7 @@ import { theme } from '@/app/theme'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-      <MantineProvider theme={theme} defaultColorScheme="dark">
+      <MantineProvider theme={theme} defaultColorScheme="light">
         <Notifications />
         <App />
       </MantineProvider>
