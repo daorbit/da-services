@@ -1,5 +1,5 @@
 {
-  "name": "admin-be",
+  "name": "da-services-backend",
   "version": "1.0.0",
   "description": "DA Services admin backend",
   "main": "dist/index.js",
@@ -8,6 +8,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
     "seed:superadmin": "tsx src/scripts/seed-superadmin.ts"
   },
   "dependencies": {
