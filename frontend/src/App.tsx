@@ -3,9 +3,10 @@ import { LoginPage } from "@/features/auth/LoginPage";
 import { ProtectedRoute } from "@/shared/components/ProtectedRoute";
 import { Layout } from "@/shared/components/Layout";
 import { AdminUsersPage } from "@/features/admin-users/AdminUsersPage";
-import { QuantalogUsersPage } from "@/features/quantalog/QuantalogUsersPage";
-import { QuantalogWorkspacesPage } from "@/features/quantalog/QuantalogWorkspacesPage";
-import { QuantalogWorkspaceDetailPage } from "@/features/quantalog/QuantalogWorkspaceDetailPage";
+import { AppsPage } from "@/features/apps/AppsPage";
+import { AppUsersPage } from "@/features/app-data/AppUsersPage";
+import { AppWorkspacesPage } from "@/features/app-data/AppWorkspacesPage";
+import { AppWorkspaceDetailPage } from "@/features/app-data/AppWorkspaceDetailPage";
 
 function App() {
   return (
@@ -14,10 +15,11 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
-            <Route index element={<Navigate to="/quantalog/workspaces" replace />} />
-            <Route path="/quantalog/users" element={<QuantalogUsersPage />} />
-            <Route path="/quantalog/workspaces" element={<QuantalogWorkspacesPage />} />
-            <Route path="/quantalog/workspaces/:id" element={<QuantalogWorkspaceDetailPage />} />
+            <Route index element={<Navigate to="/apps" replace />} />
+            <Route path="/apps" element={<AppsPage />} />
+            <Route path="/apps/:appSlug/users" element={<AppUsersPage />} />
+            <Route path="/apps/:appSlug/workspaces" element={<AppWorkspacesPage />} />
+            <Route path="/apps/:appSlug/workspaces/:id" element={<AppWorkspaceDetailPage />} />
             <Route path="/admin-users" element={<AdminUsersPage />} />
           </Route>
         </Route>

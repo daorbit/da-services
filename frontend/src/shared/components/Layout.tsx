@@ -8,25 +8,12 @@ import {
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import {
   ShieldCheck, LogOut, Moon, Sun, Settings as SettingsIcon, ChevronsUpDown,
-  FolderKanban, Users,
+  FolderKanban, Users, Layers,
 } from "lucide-react";
 import { Wordmark } from "@/shared/components/Brand";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { logout } from "@/features/auth/authSlice";
-
-const NAV_GROUPS = [
-  {
-    heading: "Quantalog",
-    items: [
-      { to: "/quantalog/workspaces", label: "Workspaces", icon: FolderKanban },
-      { to: "/quantalog/users", label: "Users", icon: Users },
-    ],
-  },
-  {
-    heading: "Manage",
-    items: [{ to: "/admin-users", label: "Admin users", icon: ShieldCheck }],
-  },
-];
+import { useApps } from "@/features/apps/useApps";
 
 function NavItem({
   to,
@@ -73,6 +60,7 @@ export function Layout() {
   const scheme = useComputedColorScheme("dark");
   const dark = scheme === "dark";
   const mobile = useMediaQuery("(max-width: 48em)") ?? false;
+  const { apps } = useApps();
 
   const [navOpen, { toggle: toggleNav, close: closeNav }] = useDisclosure(false);
   useEffect(() => {
@@ -80,6 +68,24 @@ export function Layout() {
   }, [loc.pathname, closeNav]);
 
   const initials = (user?.name ?? "?").slice(0, 2).toUpperCase();
+
+  const navGroups = [
+    {
+      heading: "Ecosystem",
+      items: [{ to: "/apps", label: "Apps", icon: Layers }],
+    },
+    ...apps.map((app) => ({
+      heading: app.name,
+      items: [
+        { to: `/apps/${app.slug}/workspaces`, label: "Workspaces", icon: FolderKanban },
+        { to: `/apps/${app.slug}/users`, label: "Users", icon: Users },
+      ],
+    })),
+    {
+      heading: "Manage",
+      items: [{ to: "/admin-users", label: "Admin users", icon: ShieldCheck }],
+    },
+  ];
 
   return (
     <MantineShell
@@ -109,7 +115,7 @@ export function Layout() {
         </MantineShell.Section>
 
         <MantineShell.Section grow component={ScrollArea} type="never">
-          {NAV_GROUPS.map((group) => (
+          {navGroups.map((group) => (
             <Box key={group.heading} mb="md">
               <p className="nav-heading">{group.heading}</p>
               {group.items.map((n) => (
